@@ -1,12 +1,10 @@
 package org.springframework.util;
 
-import com.sun.istack.internal.Nullable;
+
+import org.springframework.lang.Nullable;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 
 public abstract class ResourceUtils {
 
@@ -117,9 +115,32 @@ public abstract class ResourceUtils {
      * @return
      */
     public static URL getURL(String resourceLocation){
+        Assert.notNull(resourceLocation,"resourceLocation不允许为空");
 
+        //如果是classpath开始的路径，转为file类型资源
+        if(resourceLocation.startsWith(CLASSPATH_URL_PREFIX)){
+            //加载class文件资源
+            String path = resourceLocation.substring(CLASSPATH_URL_PREFIX.length());
+            //获取类加载器，获取资源
+            ClassLoader cl = ClassUtils.getDefaultClassLoader();
+            URL url =  cl != null?cl.getResource(path):ClassUtils.class.getClassLoader().getResource(path);
+            if(url == null){
+                throw new IllegalArgumentException(resourceLocation+"资源路径不能解析为有效的资源");
+            }
+            return url;
+        }
 
-        return null;
+        try{
+            return new URL(resourceLocation);
+        }catch(MalformedURLException e) {
+            //转为普通的文件资源
+            try{
+                return new File(resourceLocation).toURI().toURL();
+            }catch (MalformedURLException ex){
+                throw new IllegalArgumentException(resourceLocation+"资源路径不能解析为有效的资源");
+            }
+
+        }
     }
 
     /**
@@ -128,17 +149,31 @@ public abstract class ResourceUtils {
      * @return
      */
     public static File getFile(URL url){
-        return null;
+        return getFile(url,"URL");
     }
 
     /**
-     * 根据给定Url和描述获取文件
+     * 根据给定Url和描述获取文件 file://ftp.linkwan.com/pub/files/foobar.txt
      * @param url Url资源定位符对象
      * @param description 描述
      * @return
      */
-    public static File getFile(URL url,String description){
-        return null;
+    public static File getFile(@Nullable URL url,  String description){
+        Assert.notNull(url,"URL["+description+"]参数不能为空");
+
+        //如果不是文件类型的资源,抛出非法参数异常
+        if(!URL_PROTOCOL_FILE.equals(url.getProtocol())){
+            throw new IllegalArgumentException("URL["+description+"]必须为文件类型的资源");
+        }
+        //获取资源描述符中的文件路径
+        //[scheme:]scheme-specific-part[#fragment] 返回scheme-specific-part部分
+        // ftp.linkwan.com/pub/files/foobar.txt
+        try{
+            return new File(toURI(url).getSchemeSpecificPart());
+        }catch (URISyntaxException e){
+            return new File(url.getFile());
+        }
+
     }
 
     /**
@@ -148,7 +183,12 @@ public abstract class ResourceUtils {
      * @return
      */
     public static File getFile(URI uri,String desciption){
-        return null;
+        Assert.notNull(uri,"URI["+desciption+"]参数不能为空");
+        //判断资源描述符是否为 文件
+        if(!URL_PROTOCOL_FILE.equals(uri.getScheme())){
+            throw new IllegalArgumentException("URI["+desciption+"]资源不是文件资源");
+        }
+        return new File(uri.getSchemeSpecificPart());
     }
 
     /**
@@ -157,7 +197,7 @@ public abstract class ResourceUtils {
      * @return
      */
     public static File getFile(URI uri){
-        return null;
+        return getFile(uri,"URI");
     }
 
     /**
@@ -210,8 +250,9 @@ public abstract class ResourceUtils {
      * @param url 资源定位符
      * @return
      */
-    public static URI toURI(URL url){
-        return  null;
+    public static URI toURI(URL url) throws URISyntaxException{
+       //获取url的全路径
+        return toURI(url.toString());
     }
 
 
@@ -220,8 +261,8 @@ public abstract class ResourceUtils {
      * @param resourceLocation 资源路径
      * @return
      */
-    public static URI toURI(String resourceLocation){
-        return null;
+    public static URI toURI(String resourceLocation) throws URISyntaxException{
+        return new URI(resourceLocation.replaceAll(" ","%20"));
     }
 
     /**
