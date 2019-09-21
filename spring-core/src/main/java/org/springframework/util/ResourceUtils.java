@@ -58,7 +58,7 @@ public abstract class ResourceUtils {
     /**
      *  vfszip资源定位符协议名
      */
-    public  static final String URL_PROTOCOL_VFSJZIP = "vfszip";
+    public  static final String URL_PROTOCOL_VFSZIP = "vfszip";
 
     /**
      * vfsfile资源定位符协议名
@@ -90,7 +90,7 @@ public abstract class ResourceUtils {
 
 
     /**
-     * 判断资源路径是否为有效的Url路径
+     * 判断资源路径是否为有效的Url路径 "file:/root/test.txt" 或者 "/root/test.txt"
      * @param resourceLocation 资源路径地址
      * @return
      */
@@ -119,6 +119,7 @@ public abstract class ResourceUtils {
 
     /**
      * 根据给定的资源路径获取Url资源定位符对象
+     * "file:/root/test.txt" 或者 "/root/test.txt"
      * @param resourceLocation 资源路径地址
      * @return
      */
@@ -141,7 +142,7 @@ public abstract class ResourceUtils {
         try{
             return new URL(resourceLocation);
         }catch(MalformedURLException e) {
-            //转为普通的文件资源
+            //转为普通的文件资源,比如file1:1.txt
             try{
                 return new File(resourceLocation).toURI().toURL();
             }catch (MalformedURLException ex){
@@ -177,6 +178,7 @@ public abstract class ResourceUtils {
         //[scheme:]scheme-specific-part[#fragment] 返回scheme-specific-part部分
         // ftp.linkwan.com/pub/files/foobar.txt
         try{
+            //去掉url路径中的空格
             return new File(toURI(url).getSchemeSpecificPart());
         }catch (URISyntaxException e){
             return new File(url.getFile());
@@ -229,7 +231,9 @@ public abstract class ResourceUtils {
         Assert.notNull(url,"URL参数不允许为空");
         //协议名为Jar、war、wsjar
         return URL_PROTOCOL_JAR.equals(url.getProtocol())
-                ||URL_PROTOCOL_WAR.equals(url.getProtocol()) || URL_PROTOCOL_WSJAR.equals(url.getProtocol());
+                ||URL_PROTOCOL_WAR.equals(url.getProtocol())
+                ||URL_PROTOCOL_ZIP.equals(url.getProtocol()) || URL_PROTOCOL_VFSZIP.equals(url.getProtocol())
+                || URL_PROTOCOL_WSJAR.equals(url.getProtocol());
     }
 
     /**
@@ -241,20 +245,7 @@ public abstract class ResourceUtils {
         Assert.notNull(url,"URL参数不允许为空");
 
         //首先判断为文件资源
-        if(!URL_PROTOCOL_FILE.equals(url.getProtocol())){
-            return false;
-        }
-
-        //在判断资源路径是否以.jar结尾
-        try{
-            String filePath = toURI(url).getSchemeSpecificPart();
-            if(filePath.endsWith(JAR_FILE_EXTENSION)){
-                return true;
-            }
-        }catch (URISyntaxException ex){
-                return false;
-        }
-        return false;
+        return URL_PROTOCOL_FILE.equals(url.getProtocol())&&url.getPath().toLowerCase().endsWith(JAR_FILE_EXTENSION;
     }
 
     /**
