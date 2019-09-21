@@ -2,8 +2,10 @@ package org.springframework.util;
 
 
 import org.springframework.lang.Nullable;
+import sun.nio.cs.ext.MacHebrew;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.*;
 
 public abstract class ResourceUtils {
@@ -105,7 +107,13 @@ public abstract class ResourceUtils {
             new URL(resourceLocation);
             return true;
         } catch (MalformedURLException e) {
-            return false;
+            //转为文件资源
+            try{
+                new File(resourceLocation).toURI().toURL();
+                return true;
+            }catch (MalformedURLException ex){
+                return false;
+            }
         }
     }
 
@@ -114,7 +122,7 @@ public abstract class ResourceUtils {
      * @param resourceLocation 资源路径地址
      * @return
      */
-    public static URL getURL(String resourceLocation){
+    public static URL getURL(String resourceLocation) throws FileNotFoundException{
         Assert.notNull(resourceLocation,"resourceLocation不允许为空");
 
         //如果是classpath开始的路径，转为file类型资源
@@ -125,7 +133,7 @@ public abstract class ResourceUtils {
             ClassLoader cl = ClassUtils.getDefaultClassLoader();
             URL url =  cl != null?cl.getResource(path):ClassUtils.class.getClassLoader().getResource(path);
             if(url == null){
-                throw new IllegalArgumentException(resourceLocation+"资源路径不能解析为有效的资源");
+                throw new FileNotFoundException(resourceLocation+"资源不存在");
             }
             return url;
         }
@@ -137,7 +145,7 @@ public abstract class ResourceUtils {
             try{
                 return new File(resourceLocation).toURI().toURL();
             }catch (MalformedURLException ex){
-                throw new IllegalArgumentException(resourceLocation+"资源路径不能解析为有效的资源");
+                throw new FileNotFoundException(resourceLocation+"资源不存在");
             }
 
         }
@@ -205,8 +213,11 @@ public abstract class ResourceUtils {
      * @param url 资源定位符
      * @return
      */
-    public static boolean isFileUrl(URL url){
-        return false;
+    public static boolean isFileUrl(@Nullable URL url){
+        Assert.notNull(url,"URL参数不允许为空");
+        //文件资源、虚拟文件资源、虚拟资源
+        return URL_PROTOCOL_FILE.equals(url.getProtocol())
+                || URL_PROTOCOL_VFSFILE.equals(url.getProtocol())||URL_PROTOCOL_VFS.equals(url.getProtocol());
     }
 
     /**
@@ -215,7 +226,10 @@ public abstract class ResourceUtils {
      * @return
      */
     public static boolean isJarURL(URL url){
-        return false;
+        Assert.notNull(url,"URL参数不允许为空");
+        //协议名为Jar、war、wsjar
+        return URL_PROTOCOL_JAR.equals(url.getProtocol())
+                ||URL_PROTOCOL_WAR.equals(url.getProtocol()) || URL_PROTOCOL_WSJAR.equals(url.getProtocol());
     }
 
     /**
@@ -224,16 +238,54 @@ public abstract class ResourceUtils {
      * @return
      */
     public static boolean jarFileURL(URL url){
+        Assert.notNull(url,"URL参数不允许为空");
+
+        //首先判断为文件资源
+        if(!URL_PROTOCOL_FILE.equals(url.getProtocol())){
+            return false;
+        }
+
+        //在判断资源路径是否以.jar结尾
+        try{
+            String filePath = toURI(url).getSchemeSpecificPart();
+            if(filePath.endsWith(JAR_FILE_EXTENSION)){
+                return true;
+            }
+        }catch (URISyntaxException ex){
+                return false;
+        }
         return false;
     }
 
     /**
-     * 根据给定资源定位符获取jar文件资源定位符
+     * 根据给定资源定位符获取jar资源定位符
+     * jar:http://www.example.com/ex.jar!/com/demo/Class.class  返回 jar:http://www.example.com/ex.jar
      * @param url 资源定位符
      * @return
      */
-    public static URL extractJarFileURL(URL url){
-        return null;
+    public static URL extractJarFileURL(URL url) throws  MalformedURLException{
+        Assert.notNull(url,"URL不能为空");
+        //判断是否为jar资源
+//        if(!URL_PROTOCOL_JAR.equals(url.getProtocol())){
+//            throw new IllegalArgumentException("给定的资源["+url+"]不是jar资源");
+//        }
+
+        String path = url.getFile();//http://www.example.com/ex.jar!/com/demo/Class.class
+        int separatorIndex = url.getFile().indexOf(JAR_URL_SEPARATOR);
+        if(separatorIndex != -1){
+            try{
+                return new URL(path.substring(0,separatorIndex));
+            }catch (MalformedURLException ex){
+                //throw  new FileNotFoundException(url+"资源不存在");
+                //如果原始资源为文件资源，则将其转为文件资源
+                if(!path.startsWith("/")) {
+                    path = "/" + path.substring(0, separatorIndex);
+                }
+                return new URL(URL_PROTOCOL_FILE+path);
+            }
+        }else{
+            return url;
+        }
     }
 
     /**
@@ -241,8 +293,24 @@ public abstract class ResourceUtils {
      * @param url 资源定位符
      * @return
      */
-    public static URL extractArchiveURL(URL url){
-        return null;
+    public static URL extractArchiveURL(URL url) throws MalformedURLException {
+        Assert.notNull(url,"URL参数不能为空");
+        //判断为war
+        String path = url.getFile();
+        int warSeparatorIndex = url.getFile().indexOf(WAR_URL_SEPARATOR);
+        if(warSeparatorIndex != -1){
+            try{
+                return new URL(path.substring(0,warSeparatorIndex));
+            }catch (MalformedURLException ex){
+                //throw  new FileNotFoundException(url+"资源不存在");
+                //如果原始资源为文件资源，则将其转为文件资源
+                if(!path.startsWith("/")) {
+                    path = "/" + path.substring(0, warSeparatorIndex);
+                }
+                return new URL(URL_PROTOCOL_FILE+path);
+            }
+        }
+        return extractJarFileURL(url);
     }
 
     /**
