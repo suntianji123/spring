@@ -288,17 +288,20 @@ public abstract class ResourceUtils {
         Assert.notNull(url,"URL参数不能为空");
         //判断为war
         String path = url.getFile();
+
         int warSeparatorIndex = url.getFile().indexOf(WAR_URL_SEPARATOR);
         if(warSeparatorIndex != -1){
-            try{
-                return new URL(path.substring(0,warSeparatorIndex));
-            }catch (MalformedURLException ex){
-                //throw  new FileNotFoundException(url+"资源不存在");
-                //如果原始资源为文件资源，则将其转为文件资源
-                if(!path.startsWith("/")) {
-                    path = "/" + path.substring(0, warSeparatorIndex);
-                }
-                return new URL(URL_PROTOCOL_FILE+path);
+            String warPath = path.substring(0,warSeparatorIndex);
+
+            //war:file:mywar.war*/mypath
+            if(URL_PROTOCOL_WAR.equals(url.getProtocol())){
+                return new URL(warPath);
+            }
+
+            //jar:war:file:mywar.war*/myjar.jar/mypath
+            int startIndex = warPath.indexOf(WAR_URL_PREFIX);
+            if(startIndex != -1){
+                return new URL(warPath.substring(startIndex + WAR_URL_PREFIX.length()));
             }
         }
         return extractJarFileURL(url);
