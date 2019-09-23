@@ -13,6 +13,18 @@ allprojects {
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.12'
         compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-        testCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+        testCompile "org.assertj:assertj-core:3.13.2"
+        testCompile("org.junit.jupiter:junit-jupiter-api:5.5.2")
+        testCompile("org.junit.jupiter:junit-jupiter-params:5.5.2")
+        testRuntime("org.junit.platform:junit-platform-launcher:1.5.2")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+    }
+
+    test {
+        useJUnitPlatform()
+        include(["**/*Tests.class", "**/*Test.class"])
+        systemProperty("java.awt.headless", "true")
+        systemProperty("testGroups", project.properties.get("testGroups"))
+        systemProperty("io.netty.leakDetection.level", "paranoid")
     }
 }
