@@ -245,7 +245,7 @@ public abstract class ResourceUtils {
         Assert.notNull(url,"URL参数不允许为空");
 
         //首先判断为文件资源
-        return URL_PROTOCOL_FILE.equals(url.getProtocol())&&url.getPath().toLowerCase().endsWith(JAR_FILE_EXTENSION;
+        return URL_PROTOCOL_FILE.equals(url.getProtocol())&&url.getPath().toLowerCase().endsWith(JAR_FILE_EXTENSION);
     }
 
     /**
