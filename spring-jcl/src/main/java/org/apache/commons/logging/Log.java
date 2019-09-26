@@ -75,14 +75,14 @@ public interface Log {
      * 记录一条控制台级别的日志记录
      * @param message 日志记录内容
      */
-    void track(Object message);
+    void trace(Object message);
 
     /**
      * 记录一条控制台级别的日志记录，包括异常信息
      * @param message 日志记录内容
      * @param t 异常信息
      */
-    void track(Object message,Throwable t);
+    void trace(Object message,Throwable t);
 
     /**
      * 是否可以记录致命级别的日志记录
