@@ -5,9 +5,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.spi.ExtendedLogger;
 import org.apache.logging.log4j.spi.LoggerContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 
 import java.io.Serializable;
+import java.util.logging.LogRecord;
 
 /**
  * 日志适配器
@@ -82,6 +84,68 @@ public abstract class LogAdapter {
      *  JUL : 以上条件不满足，调用JAVA底层的日志框架
      */
     private enum  LogApi{LOG4J,SLF4J_LAL,SLF4J,JUL}
+
+    public static Log createLog(String name){
+        switch (logApi){
+            case LOG4J:
+               return Log4jAdapter.createLog(name);
+            case SLF4J_LAL:
+               return SLF4JAdapter.createLocationAwareLog(name);
+            case SLF4J:
+                return SLF4JAdapter.createSL4JLog(name);
+            default:
+                return JavaUtilLogAdapter.createLog(name);
+        }
+    }
+
+
+    /**
+     * log4j日志适配器
+     */
+    private static class Log4jAdapter{
+        public static Log createLog(String name){
+            return new Log4jLog(name);
+        }
+    }
+
+    /**
+     * SLF4JLocationAwareLogAdapter日志适配器
+     */
+    private static class SLF4JAdapter{
+        /**
+         * 创建SLEFJLocationAwareLog日志对象
+         * @param name 被记录日志的类名
+         * @return
+         */
+        public static Log createLocationAwareLog(String name) {
+            //根据类名构建需要的SLEF4J日志对象
+            Logger logger = LoggerFactory.getLogger(name);
+            return logger instanceof LocationAwareLogger ? new SLF4JLocationAwareLog((LocationAwareLogger) logger) : new SLF4JLog<>(logger);
+        }
+
+        /**
+         * 创建SLEFJLog日志对象
+         * @param name 被记录日志的类名
+         * @return
+         */
+        public static Log createSL4JLog(String name){
+            return new SLF4JLog<>(LoggerFactory.getLogger(name));
+        }
+    }
+
+    /**
+     * JavaUtilLog适配器
+     */
+    private static  class JavaUtilLogAdapter{
+        /**
+         * 创建JavaUtilLog对象
+         * @param name 被记录日志的类名
+         * @return
+         */
+        public static Log createLog(String name){
+            return new JavaUtilLog(name);
+        }
+    }
 
 
     /**
@@ -238,8 +302,8 @@ public abstract class LogAdapter {
          */
         protected final transient T logger;
 
-        public SLF4JLog(String name,T logger){
-            this.name = name;
+        public SLF4JLog(T logger){
+            this.name = logger.getName();
             this.logger = logger;
         }
 
@@ -365,8 +429,8 @@ public abstract class LogAdapter {
 
         private static final String FECQ = SLF4JLocationAwareLog.class.getName();
 
-        public SLF4JLocationAwareLog(String name, LocationAwareLogger logger) {
-            super(name, logger);
+        public SLF4JLocationAwareLog(LocationAwareLogger logger) {
+            super(logger);
         }
 
 
@@ -485,6 +549,9 @@ public abstract class LogAdapter {
         }
     }
 
+    /**
+     * JavaUtilLog日志
+     */
     private static class JavaUtilLog implements Log,Serializable{
 
         private final String name;
@@ -498,62 +565,62 @@ public abstract class LogAdapter {
 
         @Override
         public void fatal(Object message) {
-
+            log(java.util.logging.Level.SEVERE,message,null);
         }
 
         @Override
         public void fatal(Object message, Throwable t) {
-
+            log(java.util.logging.Level.SEVERE,message,t);
         }
 
         @Override
         public void error(Object message) {
-
+            log(java.util.logging.Level.SEVERE,message,null);
         }
 
         @Override
         public void error(Object message, Throwable t) {
-
+            log(java.util.logging.Level.SEVERE,message,t);
         }
 
         @Override
         public void warn(Object message) {
-
+            log(java.util.logging.Level.WARNING,message,null);
         }
 
         @Override
         public void warn(Object message, Throwable t) {
-
+            log(java.util.logging.Level.WARNING,message,t);
         }
 
         @Override
         public void info(Object message) {
-
+            log(java.util.logging.Level.INFO,message,null);
         }
 
         @Override
         public void into(Object message, Throwable t) {
-
+            log(java.util.logging.Level.INFO,message,t);
         }
 
         @Override
         public void debug(Object message) {
-
+            log(java.util.logging.Level.FINE,message,null);
         }
 
         @Override
         public void debug(Object message, Throwable t) {
-
+            log(java.util.logging.Level.FINE,message,t);
         }
 
         @Override
         public void trace(Object message) {
-
+            log(java.util.logging.Level.FINEST,message,null);
         }
 
         @Override
         public void trace(Object message, Throwable t) {
-
+            log(java.util.logging.Level.FINEST,message,t);
         }
 
         @Override
@@ -584,6 +651,93 @@ public abstract class LogAdapter {
         @Override
         public boolean isTraceEnabled() {
             return this.logger.isLoggable(java.util.logging.Level.FINEST);
+        }
+
+        private void log(java.util.logging.Level level,Object message,Throwable exception){
+            if(this.logger.isLoggable(level)){
+                LogRecord rec;
+                if(message instanceof LogRecord){
+                   rec = (LogRecord)message;
+                }else{
+                    rec = new LocationResolvingLogRecord(level,String.valueOf(message));
+                    rec.setLoggerName(this.name);
+                    rec.setResourceBundleName(this.logger.getResourceBundleName());
+                    rec.setResourceBundle(this.logger.getResourceBundle());
+                    rec.setThrown(exception);
+                }
+                this.logger.log(rec);
+            }
+        }
+
+    }
+
+    private static class LocationResolvingLogRecord extends LogRecord{
+        private static final String FECQ = java.util.logging.Logger.class.getName();
+
+        private volatile boolean resolved;
+
+        public LocationResolvingLogRecord(java.util.logging.Level level, String msg) {
+            super(level, msg);
+        }
+
+        @Override
+        public void setSourceClassName(String sourceClassName) {
+            super.setSourceClassName(sourceClassName);
+            resolved = true;
+        }
+
+        @Override
+        public void setSourceMethodName(String sourceMethodName) {
+            super.setSourceMethodName(sourceMethodName);
+            resolved = true;
+        }
+
+        @Override
+        public String getSourceClassName() {
+            if(!resolved)
+                resolve();
+            return super.getSourceClassName();
+        }
+
+        @Override
+        public String getSourceMethodName() {
+            if(!resolved)
+                resolve();
+            return super.getSourceMethodName();
+        }
+
+        private void resolve(){
+            StackTraceElement[] elements = new Throwable().getStackTrace();
+            boolean found = false;
+            String sourceClassName = null;
+            String sourceMethodName = null;
+            for(StackTraceElement element : elements){
+                if(FECQ.equals(element.getClassName())){
+                    found = true;
+                }else if(found){
+                    sourceClassName = element.getClassName();
+                    sourceMethodName = element.getMethodName();
+                    break;
+                }
+            }
+            setSourceClassName(sourceClassName);
+            setSourceMethodName(sourceMethodName);
+        }
+
+        @SuppressWarnings("deprecation")  // setMillis is deprecated in JDK 9
+        protected Object writeReplace() {
+            LogRecord serialized = new LogRecord(getLevel(), getMessage());
+            serialized.setLoggerName(getLoggerName());
+            serialized.setResourceBundle(getResourceBundle());
+            serialized.setResourceBundleName(getResourceBundleName());
+            serialized.setSourceClassName(getSourceClassName());
+            serialized.setSourceMethodName(getSourceMethodName());
+            serialized.setSequenceNumber(getSequenceNumber());
+            serialized.setParameters(getParameters());
+            serialized.setThreadID(getThreadID());
+            serialized.setMillis(getMillis());
+            serialized.setThrown(getThrown());
+            return serialized;
         }
     }
 
