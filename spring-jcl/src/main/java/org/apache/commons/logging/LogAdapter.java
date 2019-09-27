@@ -213,7 +213,7 @@ public abstract class LogAdapter {
         }
 
         @Override
-        public void into(Object message, Throwable t) {
+        public void info(Object message, Throwable t) {
             log(message,Level.INFO,t);
         }
 
@@ -357,7 +357,7 @@ public abstract class LogAdapter {
         }
 
         @Override
-        public void into(Object message, Throwable t) {
+        public void info(Object message, Throwable t) {
             if(message instanceof  String || this.logger.isInfoEnabled()){
                 this.logger.error(String.valueOf(message),t);
             }
@@ -484,7 +484,7 @@ public abstract class LogAdapter {
         }
 
         @Override
-        public void into(Object message, Throwable t) {
+        public void info(Object message, Throwable t) {
             if(message instanceof  String || this.logger.isInfoEnabled()){
                 this.logger.log(null,FECQ,LocationAwareLogger.INFO_INT,String.valueOf(message),null,t);
             }
@@ -599,7 +599,7 @@ public abstract class LogAdapter {
         }
 
         @Override
-        public void into(Object message, Throwable t) {
+        public void info(Object message, Throwable t) {
             log(java.util.logging.Level.INFO,message,t);
         }
 

@@ -55,7 +55,7 @@ public interface Log {
      * @param message 日志记录内容
      * @param t 异常信息
      */
-    void into(Object message,Throwable t);
+    void info(Object message,Throwable t);
 
     /**
      * 记录一条调试级别的日志记录
