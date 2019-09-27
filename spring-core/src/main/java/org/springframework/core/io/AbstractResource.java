@@ -188,4 +188,23 @@ public abstract class AbstractResource implements Resource{
             throw new NestedIOException("Invalid URI ["+url+"]",e);
         }
     }
+
+    /**
+     * 获取文件
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public File getFile() throws IOException {
+        throw new FileNotFoundException("can get file for resource :"+getDescription());
+    }
+
+    /**
+     * 获取文件名
+     * @return
+     */
+    @Override
+    public String getFilename() {
+        return null;
+    }
 }
