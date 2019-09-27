@@ -3,6 +3,8 @@ package org.springframework.core.log;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.function.Supplier;
+
 /**
  * 日志访问类
  */
@@ -37,107 +39,209 @@ public class LogAccessor {
         this.log = LogFactory.getLog(logCategory);
     }
 
+
     /**
-     * 记录一条致命级别的日志记录
-     * @param message 日志记录内容
+     * 记录致命级别的日志
+     * @param message 消息序列
      */
-    public void fatal(Object message){
+    public void fatal(CharSequence message){
         this.log.fatal(message);
     }
 
     /**
-     * 记录一条致命级别的日志记录,包括异常信息
-     * @param message 日志记录内容
-     * @param t 异常信息
+     * 记录致命级别的日志
+     * @param exception 异常
+     * @param message 消息序列
      */
-    public void fatal(Object message,Throwable t){
-        this.log.fatal(message,t);
+    public void fatal(Throwable exception,CharSequence message){
+        this.log.fatal(message,exception);
     }
 
     /**
-     * 记录一条错误级别的日志记录
-     * @param message 日志记录内容
+     * 记录致命级别的日志
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
      */
-    public void error(Object message){
+    public void fatal(Supplier<? extends CharSequence> supplier){
+        this.log.fatal(LogMessage.of(supplier));
+    }
+
+    /**
+     * 记录致命级别的日志
+     * @param exception 异常
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void fatal(Throwable exception,Supplier<? extends CharSequence> supplier){
+        this.log.fatal(LogMessage.of(supplier),exception);
+    }
+
+    /**
+     * 记录错误级别的日志
+     * @param message 消息序列
+     */
+    public void error(CharSequence message){
         this.log.error(message);
     }
 
     /**
-     * 记录一条错误级别的日志记录，包括异常信息
-     * @param message 日志记录内容
-     * @param t 异常信息
+     * 记录错误级别的日志
+     * @param exception 异常
+     * @param message 消息序列
      */
-    public void error(Object message,Throwable t){
-        this.log.error(message,t);
+    public void error(Throwable exception,CharSequence message){
+        this.log.error(message,exception);
     }
 
     /**
-     * 记录一条警告级别的日志记录
-     * @param message 日志记录内容
+     * 记录错误级别的日志
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
      */
-    public void warn(Object message){
+    public void error(Supplier<? extends CharSequence> supplier){
+        this.log.error(LogMessage.of(supplier));
+    }
+
+    /**
+     * 记录错误级别的日志
+     * @param exception 异常
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void error(Throwable exception,Supplier<? extends CharSequence> supplier){
+        this.log.error(LogMessage.of(supplier),exception);
+    }
+
+    /**
+     * 记录警告级别的日志
+     * @param message 消息序列
+     */
+    public void warn(CharSequence message){
         this.log.warn(message);
     }
 
     /**
-     * 记录一条警告级别的日志记录，包括异常信息
-     * @param message 日志记录内容
-     * @param t 异常信息
+     * 记录警告级别的日志
+     * @param exception 异常
+     * @param message 消息序列
      */
-    public void warn(Object message,Throwable t){
-        this.log.warn(message,t);
+    public void warn(Throwable exception,CharSequence message){
+        this.log.warn(message,exception);
     }
 
     /**
-     * 记录一条消息级别的日志记录
-     * @param message 日志记录内容
+     * 记录警告级别的日志
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
      */
-    public void info(Object message){
+    public void warn(Supplier<? extends CharSequence> supplier){
+        this.log.warn(LogMessage.of(supplier));
+    }
+
+    /**
+     * 记录警告级别的日志
+     * @param exception 异常
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void warn(Throwable exception,Supplier<? extends CharSequence> supplier){
+        this.log.warn(LogMessage.of(supplier),exception);
+    }
+
+    /**
+     * 记录信息级别的日志
+     * @param message 消息序列
+     */
+    public void info(CharSequence message){
         this.log.info(message);
     }
 
     /**
-     * 记录一条消息级别的日志记录，包括异常信息
-     * @param message 日志记录内容
-     * @param t 异常信息
+     * 记录信息级别的日志
+     * @param exception 异常
+     * @param message 消息序列
      */
-    public void into(Object message,Throwable t){
-        this.log.info(message,t);
+    public void info(Throwable exception,CharSequence message){
+        this.log.info(message,exception);
     }
 
     /**
-     * 记录一条调试级别的日志记录
-     * @param message 日志记录内容
+     * 记录信息级别的日志
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
      */
-    public void debug(Object message){
+    public void info(Supplier<? extends CharSequence> supplier){
+        this.log.info(LogMessage.of(supplier));
+    }
+
+    /**
+     * 记录信息级别的日志
+     * @param exception 异常
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void info(Throwable exception,Supplier<? extends CharSequence> supplier){
+        this.log.info(LogMessage.of(supplier),exception);
+    }
+
+    /**
+     * 记录调试级别的日志
+     * @param message 消息序列
+     */
+    public void debug(CharSequence message){
         this.log.debug(message);
     }
 
-
     /**
-     * 记录一条调试级别的日志记录，包括异常信息
-     * @param message 日志记录内容
-     * @param t 异常信息
+     * 记录调试级别的日志
+     * @param exception 异常
+     * @param message 消息序列
      */
-    public void debug(Object message, Throwable t){
-        this.log.debug(message,t);
+    public void debug(Throwable exception,CharSequence message){
+        this.log.debug(message,exception);
     }
 
     /**
-     * 记录一条控制台级别的日志记录
-     * @param message 日志记录内容
+     * 记录调试级别的日志
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
      */
-    public void trace(Object message){
+    public void debug(Supplier<? extends CharSequence> supplier){
+        this.log.debug(LogMessage.of(supplier));
+    }
+
+    /**
+     * 记录调试级别的日志
+     * @param exception 异常
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void debug(Throwable exception,Supplier<? extends CharSequence> supplier){
+        this.log.debug(LogMessage.of(supplier),exception);
+    }
+
+    /**
+     * 记录控制台级别的日志
+     * @param message 消息序列
+     */
+    public void trace(CharSequence message){
         this.log.trace(message);
     }
 
     /**
-     * 记录一条控制台级别的日志记录，包括异常信息
-     * @param message 日志记录内容
-     * @param t 异常信息
+     * 记录控制台级别的日志
+     * @param exception 异常
+     * @param message 消息序列
      */
-    public void trace(Object message,Throwable t){
-        this.log.trace(message,t);
+    public void trace(Throwable exception,CharSequence message){
+        this.log.trace(message,exception);
+    }
+
+    /**
+     * 记录控制台级别的日志
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void trace(Supplier<? extends CharSequence> supplier){
+        this.log.trace(LogMessage.of(supplier));
+    }
+
+    /**
+     * 记录控制台级别的日志
+     * @param exception 异常
+     * @param supplier 实现Supplier接口，并继承CharSeque的实例的日志信息
+     */
+    public void trace(Throwable exception,Supplier<? extends CharSequence> supplier){
+        this.log.trace(LogMessage.of(supplier),exception);
     }
 
     /**
