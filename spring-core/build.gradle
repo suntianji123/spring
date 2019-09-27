@@ -16,3 +16,6 @@ dependencies {
     testCompile("org.assertj:assertj-core")
     
 }*/
+dependencies{
+    compile(project(":spring-jcl"))
+}
