@@ -1,5 +1,6 @@
 package org.springframework.core.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -11,5 +12,5 @@ public interface InputStreamSouce {
      * 获取输入流
      * @return
      */
-    InputStream getInputStream();
+    InputStream getInputStream() throws IOException;
 }

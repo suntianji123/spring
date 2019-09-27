@@ -1,5 +1,7 @@
 package org.springframework.core.io;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -76,13 +78,13 @@ public interface Resource extends InputStreamSouce {
      * 获取资源定位符
      * @return
      */
-    URL getURL();
+    URL getURL() throws IOException;
 
     /**
      * 获取资源描述符
      * @return
      */
-    URI getURI();
+    URI getURI() throws IOException;
 
     /**
      * 获取文件
