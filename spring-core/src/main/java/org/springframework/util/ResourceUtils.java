@@ -186,7 +186,7 @@ public abstract class ResourceUtils {
 
     /**
      * 格局给定的资源标识符和描述获取文件
-     * @param uri 资源标识符
+     * @param uri 资源标识符 (不包括虚拟文件资源描述符)
      * @param desciption 描述
      * @return
      */
