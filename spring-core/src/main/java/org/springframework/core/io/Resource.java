@@ -33,7 +33,7 @@ public interface Resource extends InputStreamSouce {
      * 资源的长度
      * @return
      */
-    int contentLength() throws IOException;
+    long contentLength() throws IOException;
 
     /**
      * 资源最后一次修改时间

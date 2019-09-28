@@ -1,7 +1,7 @@
-package org.springframework.util;
+package org.springframework.core.io;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -259,11 +259,12 @@ public abstract class VfsUtils {
     /**
      * 获取虚拟文件的子虚拟文件
      * @param vfsResource 虚拟文件
+     * @param path 路径
      * @return
      * @throws IOException
      */
-    static Object getChild(Object vfsResource) throws IOException{
-        return invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_CHILD,vfsResource);
+    static Object getChild(Object vfsResource,String path) throws IOException{
+        return invokeVfsMethod(VIRTUAL_FILE_METHOD_GET_CHILD,vfsResource,path);
     }
 
     /**

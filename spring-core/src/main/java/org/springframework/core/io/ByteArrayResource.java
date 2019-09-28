@@ -65,7 +65,7 @@ public class ByteArrayResource extends AbstractResource {
      * @throws IOException
      */
     @Override
-    public int contentLength() throws IOException {
+    public long contentLength() throws IOException {
         return this.byteArray.length;
     }
 

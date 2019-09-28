@@ -52,7 +52,7 @@ public abstract class AbstractResource implements Resource{
      * @throws IOException
      */
     @Override
-    public int contentLength() throws IOException {
+    public long contentLength() throws IOException {
         InputStream in = getInputStream();
 
         try{
