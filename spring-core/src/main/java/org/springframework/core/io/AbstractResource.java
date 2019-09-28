@@ -23,8 +23,7 @@ public abstract class AbstractResource implements Resource{
     public boolean exists() {
        try{
            //如果为文件资源，判断文件是否存在
-           getFile().exists();
-           return true;
+           return getFile().exists();
        }catch (IOException e){
             //如果为流资源，判断流是否可以关闭
            try{
