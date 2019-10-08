@@ -38,7 +38,7 @@ public abstract class StringUtils {
         }
 
         //讲window路径转为linux路径
-        String pathToUse = path.replaceAll(WINDOWS_FOLDER_SEPARATOR,FLODER_SEPARATOR);
+        String pathToUse = replace(path,WINDOWS_FOLDER_SEPARATOR,FLODER_SEPARATOR);
 
         //如果没有相对路径符，直接返回
         if(pathToUse.indexOf(".") == -1){
@@ -87,6 +87,42 @@ public abstract class StringUtils {
 
 
         return prefix + collectionToDelimitedString(pathElement,FLODER_SEPARATOR);
+    }
+
+    /**
+     * 替换字符串
+     * @param inString 输入字符串
+     * @param oldPattern 被替换的字符串
+     * @param newPattern 替换成的目标字符串
+     * @return
+     */
+    public static String replace(String inString,String oldPattern,@Nullable String newPattern){
+        if(!hasLength(inString) || !hasLength(oldPattern) || newPattern == null){
+            return inString;
+        }
+
+        int index = inString.indexOf(oldPattern);
+        if(index == -1){
+            return inString;
+        }
+
+        int capacity = inString.length();
+        if(newPattern.length() > oldPattern.length()){
+            capacity += 16;
+        }
+
+        StringBuilder sb = new StringBuilder(capacity);
+        int patLen = oldPattern.length();
+        int pos = 0;
+        while(index >= 0){
+            sb.append(inString.substring(pos,index));
+            sb.append(newPattern);
+            pos = index +patLen;
+            index = inString.indexOf(oldPattern,pos);
+        }
+
+        sb.append(inString.substring(pos));
+        return sb.toString();
     }
 
     /**
