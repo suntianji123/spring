@@ -270,4 +270,23 @@ public abstract class StringUtils {
         int separator = path.lastIndexOf(FLODER_SEPARATOR);
         return separator != - 1?path.substring(separator + 1):path;
     }
+
+    /**
+     * 根据路径和相对路径创建一个绝对路径
+     * @param path 路径
+     * @param relativePath 相对路径
+     * @return
+     */
+    public static String applyRelativePath(String path,String relativePath){
+        int separator = path.lastIndexOf(FLODER_SEPARATOR);
+        if(separator != -1){
+            String newPath = path.substring(0,separator);
+            if(!relativePath.startsWith(FLODER_SEPARATOR)){
+                newPath += FLODER_SEPARATOR;
+            }
+            return newPath + relativePath;
+        }else{
+            return relativePath;
+        }
+    }
 }
