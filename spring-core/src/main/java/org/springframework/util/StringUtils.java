@@ -48,8 +48,13 @@ public abstract class StringUtils {
         int preIndex = pathToUse.indexOf(":");
         String prefix = "";
         if(preIndex != -1){
-            prefix = pathToUse.substring(preIndex + 1);
-            pathToUse = pathToUse.substring(preIndex + 1);
+            prefix = pathToUse.substring(0,preIndex + 1);
+
+            if(prefix.contains(FLODER_SEPARATOR)){
+                prefix = "";
+            }else{
+                pathToUse = pathToUse.substring(preIndex + 1);
+            }
         }
 
         if(pathToUse.startsWith(FLODER_SEPARATOR)){
@@ -205,7 +210,7 @@ public abstract class StringUtils {
             }
 
             //将剩余的字符串加入
-            if(pos < inString.length()){
+            if(inString.length() > 0 && pos <= inString.length()){
                 result.add(deleteAny(inString.substring(pos),charsToDelete));
             }
         }
