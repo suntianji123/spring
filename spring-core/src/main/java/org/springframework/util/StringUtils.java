@@ -254,4 +254,20 @@ public abstract class StringUtils {
     public static boolean hasLength(String str){
         return str != null && !"".equals(str);
     }
+
+
+    /**
+     * 获取文件名
+     * @param path 路径
+     * @return
+     */
+    @Nullable
+    public static String getFilename(String path){
+        if(path == null){
+            return null;
+        }
+
+        int separator = path.lastIndexOf(FLODER_SEPARATOR);
+        return separator != - 1?path.substring(separator + 1):path;
+    }
 }
