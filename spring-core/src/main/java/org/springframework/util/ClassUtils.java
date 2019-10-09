@@ -1,9 +1,15 @@
 package org.springframework.util;
 
+import org.springframework.lang.Nullable;
+
 /**
  * 类操作工具
  */
 public abstract class ClassUtils {
+
+    private static final char PACKAGE_SEPARATOR = '.';
+
+    private static final char PATH_SEPARATOR = '/';
 
     /**
      * 获取类加载器
@@ -32,5 +38,18 @@ public abstract class ClassUtils {
         }
 
         return cl;
+    }
+
+    public static String classPackageAsResourcePath(@Nullable Class<?> clazz) {
+        if (clazz == null) {
+            return "";
+        }
+        String className = clazz.getName();
+        int packageEndIndex = className.lastIndexOf(PACKAGE_SEPARATOR);
+        if (packageEndIndex == -1) {
+            return "";
+        }
+        String packageName = className.substring(0, packageEndIndex);
+        return packageName.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR);
     }
 }
