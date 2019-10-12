@@ -45,7 +45,7 @@ public class ClassRelativeResourceLoader extends DefaultResouceLoader {
         @Override
         public Resource createRelative(String relativePath) throws IOException {
             String pathToUse = StringUtils.applyRelativePath(getPath(),relativePath);
-            return new ClassRelativeContextResource(pathToUse,this.);
+            return new ClassRelativeContextResource(pathToUse,this.clazz);
         }
     }
 }
