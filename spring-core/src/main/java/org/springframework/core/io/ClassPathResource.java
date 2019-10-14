@@ -3,6 +3,7 @@ package org.springframework.core.io;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.FileNotFoundException;
@@ -108,7 +109,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
     @Override
     public Resource createRelative(String relativePath) throws IOException {
         String pathToUse = StringUtils.applyRelativePath(this.path,relativePath);
-        return this.clazz != null?new ClassPathResource(pathToUse,this.clazz):new ClassPathResource(path,this.classLoader);
+        return this.clazz != null?new ClassPathResource(pathToUse,this.clazz):new ClassPathResource(pathToUse,this.classLoader);
     }
 
     /**
@@ -127,7 +128,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
         }
 
         ClassPathResource otherRes = (ClassPathResource) other;
-        return this.path.equals(otherRes.path) && this.clazz.equals(otherRes.clazz) && this.classLoader.equals(otherRes.classLoader);
+        return this.path.equals(otherRes.path) && ObjectUtils.nullSafeEquals(this.clazz,otherRes.clazz)
+                && ObjectUtils.nullSafeEquals(this.classLoader,otherRes.classLoader);
     }
 
     @Override
