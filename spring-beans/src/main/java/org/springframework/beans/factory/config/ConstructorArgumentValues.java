@@ -379,6 +379,39 @@ public class ConstructorArgumentValues {
     }
 
     /**
+     * 获取带下标的参数值集合
+     * @return
+     */
+    public Map<Integer,ValueHolder> getIndexedArgumentValue(){
+        return Collections.unmodifiableMap(this.indexedArgumentValues);
+    }
+
+    /**
+     * 获取常规的参数值列表
+     * @return
+     */
+    public List<ValueHolder> getGenericArgumentValues(){
+        return Collections.unmodifiableList(this.genericArgumentValues);
+    }
+
+    /**
+     * 获取参数值数量
+     * @return
+     */
+    public int getArgumentValueCount(){
+        return  (this.indexedArgumentValues.size() + this.genericArgumentValues.size());
+    }
+
+
+    /**
+     * 判断参数值为空
+     * @return
+     */
+    public boolean isEmpty(){
+        return (this.indexedArgumentValues.isEmpty() && this.genericArgumentValues.isEmpty());
+    }
+
+    /**
      * 参数值持有者
      */
     public static class ValueHolder implements BeanMetadataElement {
