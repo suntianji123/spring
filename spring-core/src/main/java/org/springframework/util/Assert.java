@@ -29,4 +29,15 @@ public abstract class Assert {
             throw new IllegalArgumentException(message);
         }
     }
+
+    /**
+     * 断言表达式为True
+     * @param expression 表达式
+     * @param message 错误信息
+     */
+    public static void isTrue(boolean expression,String message){
+        if(!expression){
+            throw new IllegalArgumentException(message);
+        }
+    }
 }
