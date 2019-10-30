@@ -3,6 +3,7 @@ package org.springframework.util;
 import org.springframework.lang.Nullable;
 
 import java.util.Arrays;
+import java.util.StringJoiner;
 
 /**
  * 对象工具类
@@ -12,6 +13,35 @@ public abstract class ObjectUtils {
     private static final int INITAL_HASH = 7;
     private static final int MULTIPLIER = 31;
 
+    /**
+     * null字符串
+     */
+    private static final String NULL_STRING = "null";
+
+    /**
+     * 数组字符串起始字符
+     */
+    private static final String ARRAY_START = "{";
+
+    /**
+     * 数组字符串结束字符
+     */
+    private static final String ARRAY_END = "}";
+
+    /**
+     * 数组字符串分隔符
+     */
+    private static final String ARRAY_SEPERATOR = ",";
+
+    /**
+     * 空数组字符串
+     */
+    private static final String EMPTY_ARRAY = ARRAY_START + ARRAY_END;
+
+    /**
+     * 空字符串
+     */
+    private static final String EMPTY_STRING = "";
 
     /**
      * 判断数组中是否包含某个元素
@@ -289,4 +319,269 @@ public abstract class ObjectUtils {
 
         return false;
     }
+
+    /**
+     * 判断数组为空
+     * @param arr 数组
+     * @return
+     */
+    public static boolean isEmpty(Object[] arr){
+        return arr == null || arr.length == 0;
+    }
+
+    /**
+     * 将对象转为字符串
+     * @param obj
+     */
+    public static String nullSafeToString(@Nullable Object obj){
+        if(obj == null){
+            return NULL_STRING;
+        }
+
+        if(obj instanceof Object){
+            return (String)obj;
+        }
+
+        if(obj instanceof Object[]){
+            return nullSafeToString((Object[]) obj);
+        }
+
+        if(obj instanceof boolean[]){
+            return nullSafeToString((boolean[]) obj);
+        }
+
+        if(obj instanceof byte[]){
+            return nullSafeToString((byte[]) obj);
+        }
+
+        if(obj instanceof char[]){
+            return nullSafeToString((char[]) obj);
+        }
+
+        if(obj instanceof int[]){
+            return nullSafeToString((int[]) obj);
+        }
+
+        if(obj instanceof double[]){
+            return nullSafeToString((double[]) obj);
+        }
+
+
+        if(obj instanceof float[]){
+            return nullSafeToString((float[]) obj);
+        }
+
+
+        if(obj instanceof long[]){
+            return nullSafeToString((long[]) obj);
+        }
+
+        if(obj instanceof short[]){
+            return nullSafeToString((short[]) obj);
+        }
+
+        String str = obj.toString();
+        return str != null?str:EMPTY_STRING;
+    }
+
+    /**
+     * 将object数组转为指定格式的数组
+     * @param arr 数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable Object[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(Object obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+        return sj.toString();
+    }
+
+    /**
+     * 将布尔数组转为指定格式的数组
+     * @param arr 布尔数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable boolean[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(boolean obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+    /**
+     * 将字节数组转为指定格式的数组
+     * @param arr 字节数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable byte[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(byte obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+    /**
+     * 将整数数组转为指定格式的数组
+     * @param arr 整数数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable int[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(int obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+
+    /**
+     * 将短整数数组转为指定格式的数组
+     * @param arr 短整数数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable short[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(short obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+    /**
+     * 将长整数数组转为指定格式的数组
+     * @param arr 长整数数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable long[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(long obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+    /**
+     * 将双精度小数组转为指定格式的数组
+     * @param arr 双精度小数数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable double[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(double obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+    /**
+     * 将小数组转为指定格式的数组
+     * @param arr 小数数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable float[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(float obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+    /**
+     * 将字符数组转为指定格式的数组
+     * @param arr 字符数组对象
+     * @return
+     */
+    public static String nullSafeToString(@Nullable char[] arr){
+        if(arr == null){
+            return NULL_STRING;
+        }
+
+        if(arr.length == 0){
+            return EMPTY_ARRAY;
+        }
+
+        StringJoiner sj = new StringJoiner(ARRAY_SEPERATOR,ARRAY_START,ARRAY_END);
+        for(char obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+
+        return sj.toString();
+    }
+
+
 }

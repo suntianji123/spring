@@ -1,6 +1,7 @@
 package org.springframework.beans.factory.config;
 
 import org.springframework.beans.BeanMetadataElement;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.AttributeAccessor;
 import org.springframework.lang.Nullable;
 
@@ -136,4 +137,112 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
      * @return
      */
     String getFactoryMethodName();
+
+    /**
+     * 获取构造函数参数值
+     * @return
+     */
+    ConstructorArgumentValues getConstructorArgumentValues();
+
+    /**
+     * 判断是否有构造函数参数值
+     * @return
+     */
+    default boolean hasConstructorArgumentValues(){
+        return !getConstructorArgumentValues().isEmpty();
+    };
+
+    /**
+     * 获取可变的属性值列表
+     * @return
+     */
+    MutablePropertyValues getPropertyValues();
+
+    /**
+     * 判断是否有属性值
+     * @return
+     */
+    default boolean hasPropertyValues(){
+        return !getPropertyValues().isEmpty();
+    }
+
+    /**
+     * 设置初始化方法名字
+     * @param initMethodName
+     */
+    void setInitMethodName(@Nullable String initMethodName);
+
+    /**
+     * 获取初始化方法名字
+     * @return
+     */
+    @Nullable
+    String getInitMethodName();
+
+    /**
+     * 设置销毁方法名称
+     * @param destoryMethodName 销毁方法名称
+     */
+    void setDestoryMethodName(@Nullable String destoryMethodName);
+
+    /**
+     * 获取销毁方法名称
+     * @return
+     */
+    @Nullable
+    String getDestoryMethodName();
+
+    /**
+     * 设置角色
+     * @param role
+     */
+    void setRole(int role);
+
+    /**
+     * 获取角色
+     * @return
+     */
+    int getRole();
+
+    /**
+     * 设置描述
+     * @param description 描述
+     */
+    void setDescription(@Nullable  String description);
+
+    /**
+     * 获取描述
+     * @return
+     */
+    String getDescription();
+
+    /**
+     * 是否是单例
+     * @return
+     */
+    boolean isSingleTon();
+
+    /**
+     * 是否为原型
+     * @return
+     */
+    boolean isProtoType();
+
+    /**
+     * 是否为抽象
+     * @return
+     */
+    boolean isAbstract();
+
+    /**
+     * 获取资源描述
+     * @return
+     */
+    String getResourceDescription();
+
+    /**
+     * 获取原始的BeanDefinition对象
+     * @return
+     */
+    BeanDefinition getOriginalBeanDefinition();
 }

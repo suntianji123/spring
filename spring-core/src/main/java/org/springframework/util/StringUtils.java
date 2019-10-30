@@ -2,10 +2,7 @@ package org.springframework.util;
 
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * 字符串工具类
@@ -288,5 +285,27 @@ public abstract class StringUtils {
         }else{
             return relativePath;
         }
+    }
+
+    /**
+     * 将数组转为用分隔符分隔的字符串
+     * @param arr 数组
+     * @param delim 分隔符
+     * @return
+     */
+    public static String arrayToDelimitedString(Object[] arr,String delim){
+        if(ObjectUtils.isEmpty(arr)){
+            return "";
+        }
+
+        if(arr.length == 1){
+            ObjectUtils.nullSafeToString(arr[0]);
+        }
+
+        StringJoiner sj = new StringJoiner(delim);
+        for(Object obj : arr){
+            sj.add(String.valueOf(obj));
+        }
+        return sj.toString();
     }
 }
