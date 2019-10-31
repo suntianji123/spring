@@ -2,6 +2,7 @@ package org.springframework.util;
 
 import org.springframework.lang.Nullable;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -126,5 +127,14 @@ public abstract class ClassUtils {
 
         return false;
 
+    }
+
+    /**
+     * 判断一个Class类是否为内部类
+     * @param clazz 类对象
+     * @return
+     */
+    public static boolean isInnerClass(Class<?> clazz){
+        return clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers());
     }
 }

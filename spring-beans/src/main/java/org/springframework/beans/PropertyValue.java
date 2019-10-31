@@ -132,7 +132,7 @@ public class PropertyValue extends BeanMetadataAttributeAccessor implements Seri
      * @return
      */
     public String getName(){
-        return this.getName();
+        return this.name;
     }
 
     /**
